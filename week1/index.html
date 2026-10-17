@@ -12,8 +12,8 @@
     body {
       margin: 0;
       padding: 40px 16px;
-      background: #f2f4f8;
-      font-family: "Hiragino Sans", "Meiryo", sans-serif;
+      font-family: "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+      background-color: #f2f4f7;
       color: #333;
     }
 
@@ -21,101 +21,96 @@
       max-width: 480px;
       margin: 0 auto;
       padding: 24px;
-      background: #fff;
+      background-color: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
     h1 {
       margin: 0 0 20px;
-      font-size: 24px;
+      font-size: 1.5rem;
       text-align: center;
     }
 
-    .form {
+    /* 入力フォーム */
+    .todo-form {
       display: flex;
       gap: 8px;
       margin-bottom: 20px;
     }
 
-    .form input {
+    .todo-input {
       flex: 1;
       padding: 10px 12px;
-      font-size: 16px;
-      border: 1px solid #ccc;
+      font-size: 1rem;
+      border: 1px solid #ccd2da;
       border-radius: 8px;
       outline: none;
     }
 
-    .form input:focus {
-      border-color: #4a7dff;
+    .todo-input:focus {
+      border-color: #4a90e2;
     }
 
-    .form button {
+    .add-button {
       padding: 10px 16px;
-      font-size: 16px;
+      font-size: 1rem;
       color: #fff;
-      background: #4a7dff;
+      background-color: #4a90e2;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
 
-    .form button:hover {
-      background: #3366e6;
+    .add-button:hover {
+      background-color: #357abd;
     }
 
-    .count {
-      margin: 0 0 12px;
-      font-size: 14px;
-      color: #666;
-      text-align: right;
-    }
-
-    .list {
+    /* タスク一覧 */
+    .todo-list {
       margin: 0;
       padding: 0;
       list-style: none;
     }
 
-    .item {
+    .todo-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
       padding: 12px;
       margin-bottom: 8px;
-      background: #fafafa;
+      background-color: #fff;
       border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
 
-    .item-text {
+    .todo-text {
       flex: 1;
       cursor: pointer;
       word-break: break-all;
     }
 
-    .item.done .item-text {
+    .todo-item.completed .todo-text {
+      color: #999;
       text-decoration: line-through;
-      color: #aaa;
     }
 
-    .delete-btn {
-      padding: 6px 10px;
-      font-size: 14px;
+    .delete-button {
+      padding: 6px 12px;
+      font-size: 0.875rem;
       color: #fff;
-      background: #ff5c5c;
+      background-color: #e05555;
       border: none;
       border-radius: 6px;
       cursor: pointer;
     }
 
-    .delete-btn:hover {
-      background: #e04444;
+    .delete-button:hover {
+      background-color: #c43c3c;
     }
 
-    .empty {
+    .empty-message {
       color: #999;
       text-align: center;
     }
@@ -125,86 +120,102 @@
   <div class="container">
     <h1>ToDoリスト</h1>
 
-    <form class="form" id="todo-form">
-      <input type="text" id="todo-input" placeholder="タスクを入力" autocomplete="off">
-      <button type="submit">追加</button>
+    <form class="todo-form" id="todo-form">
+      <input
+        type="text"
+        class="todo-input"
+        id="todo-input"
+        placeholder="タスクを入力"
+        autocomplete="off"
+      >
+      <button type="submit" class="add-button">追加</button>
     </form>
 
-    <p class="count" id="todo-count"></p>
-
-    <ul class="list" id="todo-list"></ul>
+    <ul class="todo-list" id="todo-list"></ul>
   </div>
 
   <script>
     // タスクを管理する配列
-    const todos = [];
+    // 各タスクは { id, text, completed } の形
+    let todos = [];
 
     const form = document.getElementById("todo-form");
     const input = document.getElementById("todo-input");
     const list = document.getElementById("todo-list");
-    const count = document.getElementById("todo-count");
 
-    // 配列の内容をもとに画面を描画する
+    // タスクを追加する
+    function addTodo(text) {
+      todos.push({
+        id: Date.now(),
+        text: text,
+        completed: false,
+      });
+      render();
+    }
+
+    // 完了状態を切り替える
+    function toggleTodo(id) {
+      const todo = todos.find((t) => t.id === id);
+      if (todo) {
+        todo.completed = !todo.completed;
+      }
+      render();
+    }
+
+    // タスクを削除する
+    function deleteTodo(id) {
+      todos = todos.filter((t) => t.id !== id);
+      render();
+    }
+
+    // 配列の内容をもとにリストを描画する
     function render() {
       list.innerHTML = "";
 
-      // 完了件数 / 総件数
-      const doneCount = todos.filter((todo) => todo.done).length;
-      count.textContent = `完了 ${doneCount} / ${todos.length} 件`;
-
       if (todos.length === 0) {
         const empty = document.createElement("li");
-        empty.className = "empty";
+        empty.className = "empty-message";
         empty.textContent = "タスクはありません";
         list.appendChild(empty);
         return;
       }
 
-      todos.forEach((todo, index) => {
+      todos.forEach((todo) => {
         const li = document.createElement("li");
-        li.className = "item";
-        if (todo.done) {
-          li.classList.add("done");
+        li.className = "todo-item";
+        if (todo.completed) {
+          li.classList.add("completed");
         }
 
-        // タスク名（クリックで完了／未完了を切り替え）
         const span = document.createElement("span");
-        span.className = "item-text";
+        span.className = "todo-text";
         span.textContent = todo.text;
-        span.addEventListener("click", () => {
-          todos[index].done = !todos[index].done;
-          render();
-        });
+        span.addEventListener("click", () => toggleTodo(todo.id));
 
-        // 削除ボタン
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "delete-btn";
-        deleteBtn.textContent = "削除";
-        deleteBtn.addEventListener("click", () => {
-          todos.splice(index, 1);
-          render();
-        });
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-button";
+        deleteButton.textContent = "削除";
+        deleteButton.addEventListener("click", () => deleteTodo(todo.id));
 
         li.appendChild(span);
-        li.appendChild(deleteBtn);
+        li.appendChild(deleteButton);
         list.appendChild(li);
       });
     }
 
-    // タスクを追加する
+    // フォーム送信でタスクを追加
     form.addEventListener("submit", (event) => {
       event.preventDefault();
-
       const text = input.value.trim();
       if (text === "") {
         return;
       }
-
-      todos.push({ text: text, done: false });
+      addTodo(text);
       input.value = "";
-      render();
+      input.focus();
     });
 
+    // 初回描画
     render();
   </script>
 </body>
