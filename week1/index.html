@@ -35,6 +35,7 @@
     /* 入力フォーム */
     .todo-form {
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 20px;
     }
@@ -48,8 +49,17 @@
       outline: none;
     }
 
-    .todo-input:focus {
+    .todo-input:focus,
+    .due-input:focus {
       border-color: #4a90e2;
+    }
+
+    .due-input {
+      padding: 10px 8px;
+      font-size: 0.875rem;
+      border: 1px solid #ccd2da;
+      border-radius: 8px;
+      outline: none;
     }
 
     .add-button {
@@ -85,8 +95,13 @@
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
 
-    .todo-text {
+    .todo-body {
       flex: 1;
+      min-width: 0;
+    }
+
+    .todo-text {
+      display: block;
       cursor: pointer;
       word-break: break-all;
     }
@@ -94,6 +109,29 @@
     .todo-item.completed .todo-text {
       color: #999;
       text-decoration: line-through;
+    }
+
+    /* 期限 */
+    .todo-due {
+      display: block;
+      margin-top: 4px;
+      color: #666;
+      font-size: 0.75rem;
+    }
+
+    .todo-due.today {
+      color: #d98a00;
+      font-weight: bold;
+    }
+
+    .todo-due.overdue {
+      color: #e05555;
+      font-weight: bold;
+    }
+
+    .todo-item.completed .todo-due {
+      color: #999;
+      font-weight: normal;
     }
 
     .delete-button {
@@ -135,6 +173,12 @@
         placeholder="タスクを入力"
         autocomplete="off"
       >
+      <input
+        type="date"
+        class="due-input"
+        id="due-input"
+        aria-label="期限"
+      >
       <button type="submit" class="add-button">追加</button>
     </form>
 
@@ -145,22 +189,34 @@
 
   <script>
     // タスクを管理する配列
-    // 各タスクは { id, text, completed } の形
+    // 各タスクは { id, text, completed, dueDate } の形
+    // dueDate は "YYYY-MM-DD" 形式の文字列(期限なしの場合は空文字)
     let todos = [];
 
     const form = document.getElementById("todo-form");
     const input = document.getElementById("todo-input");
+    const dueInput = document.getElementById("due-input");
     const list = document.getElementById("todo-list");
     const count = document.getElementById("todo-count");
 
     // タスクを追加する
-    function addTodo(text) {
+    function addTodo(text, dueDate) {
       todos.push({
         id: Date.now(),
         text: text,
         completed: false,
+        dueDate: dueDate,
       });
       render();
+    }
+
+    // 今日の日付を "YYYY-MM-DD" 形式で返す
+    function getToday() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     }
 
     // 完了状態を切り替える
@@ -206,12 +262,36 @@
         span.textContent = todo.text;
         span.addEventListener("click", () => toggleTodo(todo.id));
 
+        const body = document.createElement("div");
+        body.className = "todo-body";
+        body.appendChild(span);
+
+        // 期限が設定されていれば表示する
+        if (todo.dueDate) {
+          const due = document.createElement("span");
+          due.className = "todo-due";
+          let label = `期限: ${todo.dueDate.replaceAll("-", "/")}`;
+
+          // 未完了のタスクだけ、今日まで・期限切れを強調する
+          const today = getToday();
+          if (!todo.completed && todo.dueDate < today) {
+            due.classList.add("overdue");
+            label += "(期限切れ)";
+          } else if (!todo.completed && todo.dueDate === today) {
+            due.classList.add("today");
+            label += "(今日まで)";
+          }
+
+          due.textContent = label;
+          body.appendChild(due);
+        }
+
         const deleteButton = document.createElement("button");
         deleteButton.className = "delete-button";
         deleteButton.textContent = "削除";
         deleteButton.addEventListener("click", () => deleteTodo(todo.id));
 
-        li.appendChild(span);
+        li.appendChild(body);
         li.appendChild(deleteButton);
         list.appendChild(li);
       });
@@ -224,8 +304,9 @@
       if (text === "") {
         return;
       }
-      addTodo(text);
+      addTodo(text, dueInput.value);
       input.value = "";
+      dueInput.value = "";
       input.focus();
     });
 
