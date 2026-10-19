@@ -110,6 +110,13 @@
       background-color: #c43c3c;
     }
 
+    .todo-count {
+      margin: 12px 0 0;
+      color: #666;
+      font-size: 0.875rem;
+      text-align: right;
+    }
+
     .empty-message {
       color: #999;
       text-align: center;
@@ -132,6 +139,8 @@
     </form>
 
     <ul class="todo-list" id="todo-list"></ul>
+
+    <p class="todo-count" id="todo-count"></p>
   </div>
 
   <script>
@@ -142,6 +151,7 @@
     const form = document.getElementById("todo-form");
     const input = document.getElementById("todo-input");
     const list = document.getElementById("todo-list");
+    const count = document.getElementById("todo-count");
 
     // タスクを追加する
     function addTodo(text) {
@@ -171,6 +181,10 @@
     // 配列の内容をもとにリストを描画する
     function render() {
       list.innerHTML = "";
+
+      // 完了件数 / 総件数を表示
+      const completedCount = todos.filter((t) => t.completed).length;
+      count.textContent = `${completedCount} / ${todos.length} 件完了`;
 
       if (todos.length === 0) {
         const empty = document.createElement("li");
