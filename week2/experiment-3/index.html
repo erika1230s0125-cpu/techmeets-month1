@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDoリスト</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      font-family: "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+      background-color: #f2f4f7;
+      color: #333;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    /* 入力フォーム */
+    .todo-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .todo-input {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: 1px solid #ccd2da;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .todo-input:focus,
+    .due-input:focus {
+      border-color: #4a90e2;
+    }
+
+    .due-input {
+      padding: 10px 8px;
+      font-size: 0.875rem;
+      border: 1px solid #ccd2da;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .add-button {
+      padding: 10px 16px;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #4a90e2;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .add-button:hover {
+      background-color: #357abd;
+    }
+
+    /* フィルター */
+    .search-input {
+      width: 100%;
+      margin-bottom: 8px;
+      padding: 8px 12px;
+      font-size: 0.875rem;
+      border: 1px solid #ccd2da;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: #4a90e2;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .filter-button {
+      flex: 1;
+      padding: 8px 0;
+      font-size: 0.875rem;
+      color: #4a90e2;
+      background-color: #fff;
+      border: 1px solid #4a90e2;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .filter-button:hover {
+      background-color: #eef4fc;
+    }
+
+    .filter-button.active {
+      color: #fff;
+      background-color: #4a90e2;
+    }
+
+    /* タスク一覧 */
+    .todo-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .todo-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .todo-text {
+      display: block;
+      cursor: pointer;
+      word-break: break-all;
+    }
+
+    .todo-item.completed .todo-text {
+      color: #999;
+      text-decoration: line-through;
+    }
+
+    /* 期限 */
+    .todo-due {
+      display: block;
+      margin-top: 4px;
+      color: #666;
+      font-size: 0.75rem;
+    }
+
+    .todo-due.today {
+      color: #d98a00;
+      font-weight: bold;
+    }
+
+    .todo-due.overdue {
+      color: #e05555;
+      font-weight: bold;
+    }
+
+    .todo-item.completed .todo-due {
+      color: #999;
+      font-weight: normal;
+    }
+
+    .delete-button {
+      padding: 6px 12px;
+      font-size: 0.875rem;
+      color: #fff;
+      background-color: #e05555;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .delete-button:hover {
+      background-color: #c43c3c;
+    }
+
+    .todo-count {
+      margin: 12px 0 0;
+      color: #666;
+      font-size: 0.875rem;
+      text-align: right;
+    }
+
+    .empty-message {
+      color: #999;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ToDoリスト</h1>
+
+    <form class="todo-form" id="todo-form">
+      <input
+        type="text"
+        class="todo-input"
+        id="todo-input"
+        placeholder="タスクを入力"
+        autocomplete="off"
+      >
+      <input
+        type="date"
+        class="due-input"
+        id="due-input"
+        aria-label="期限"
+      >
+      <button type="submit" class="add-button">追加</button>
+    </form>
+
+    <input
+      type="search"
+      class="search-input"
+      id="search-input"
+      placeholder="キーワードで検索"
+      aria-label="キーワードで検索"
+      autocomplete="off"
+    >
+
+    <div class="filter-buttons" id="filter-buttons">
+      <button type="button" class="filter-button active" data-filter="all">すべて</button>
+      <button type="button" class="filter-button" data-filter="active">未完了のみ</button>
+      <button type="button" class="filter-button" data-filter="completed">完了済みのみ</button>
+    </div>
+
+    <ul class="todo-list" id="todo-list"></ul>
+
+    <p class="todo-count" id="todo-count"></p>
+  </div>
+
+  <script>
+    // タスクを管理する配列
+    // 各タスクは { id, text, completed, dueDate } の形
+    // dueDate は "YYYY-MM-DD" 形式の文字列(期限なしの場合は空文字)
+    let todos = [];
+
+    // 現在のフィルター("all" / "active" / "completed")
+    let currentFilter = "all";
+
+    // 検索キーワード(空文字なら絞り込まない)
+    let searchKeyword = "";
+
+    const form = document.getElementById("todo-form");
+    const input = document.getElementById("todo-input");
+    const dueInput = document.getElementById("due-input");
+    const list = document.getElementById("todo-list");
+    const count = document.getElementById("todo-count");
+    const filterButtons = document.querySelectorAll(".filter-button");
+    const searchInput = document.getElementById("search-input");
+
+    // タスクを追加する
+    function addTodo(text, dueDate) {
+      todos.push({
+        id: Date.now(),
+        text: text,
+        completed: false,
+        dueDate: dueDate,
+      });
+      render();
+    }
+
+    // 今日の日付を "YYYY-MM-DD" 形式で返す
+    function getToday() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    // 完了状態を切り替える
+    function toggleTodo(id) {
+      const todo = todos.find((t) => t.id === id);
+      if (todo) {
+        todo.completed = !todo.completed;
+      }
+      render();
+    }
+
+    // タスクを削除する
+    function deleteTodo(id) {
+      todos = todos.filter((t) => t.id !== id);
+      render();
+    }
+
+    // 配列の内容をもとにリストを描画する
+    function render() {
+      list.innerHTML = "";
+
+      // 完了件数 / 総件数を表示
+      const completedCount = todos.filter((t) => t.completed).length;
+      count.textContent = `${completedCount} / ${todos.length} 件完了`;
+
+      // 状態フィルターと検索キーワードの両方に合うタスクだけを取り出す
+      const keyword = searchKeyword.toLowerCase();
+      const visibleTodos = todos.filter((t) => {
+        if (currentFilter === "active" && t.completed) {
+          return false;
+        }
+        if (currentFilter === "completed" && !t.completed) {
+          return false;
+        }
+        return t.text.toLowerCase().includes(keyword);
+      });
+
+      if (visibleTodos.length === 0) {
+        const empty = document.createElement("li");
+        empty.className = "empty-message";
+        empty.textContent = "該当するタスクはありません";
+        if (todos.length === 0) {
+          empty.textContent = "タスクはありません";
+        }
+        list.appendChild(empty);
+        return;
+      }
+
+      visibleTodos.forEach((todo) => {
+        const li = document.createElement("li");
+        li.className = "todo-item";
+        if (todo.completed) {
+          li.classList.add("completed");
+        }
+
+        const span = document.createElement("span");
+        span.className = "todo-text";
+        span.textContent = todo.text;
+        span.addEventListener("click", () => toggleTodo(todo.id));
+
+        const body = document.createElement("div");
+        body.className = "todo-body";
+        body.appendChild(span);
+
+        // 期限が設定されていれば表示する
+        if (todo.dueDate) {
+          const due = document.createElement("span");
+          due.className = "todo-due";
+          let label = `期限: ${todo.dueDate.replaceAll("-", "/")}`;
+
+          // 未完了のタスクだけ、今日まで・期限切れを強調する
+          const today = getToday();
+          if (!todo.completed && todo.dueDate < today) {
+            due.classList.add("overdue");
+            label += "(期限切れ)";
+          } else if (!todo.completed && todo.dueDate === today) {
+            due.classList.add("today");
+            label += "(今日まで)";
+          }
+
+          due.textContent = label;
+          body.appendChild(due);
+        }
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-button";
+        deleteButton.textContent = "削除";
+        deleteButton.addEventListener("click", () => deleteTodo(todo.id));
+
+        li.appendChild(body);
+        li.appendChild(deleteButton);
+        list.appendChild(li);
+      });
+    }
+
+    // フォーム送信でタスクを追加
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (text === "") {
+        return;
+      }
+      addTodo(text, dueInput.value);
+      input.value = "";
+      dueInput.value = "";
+      input.focus();
+    });
+
+    // フィルターボタンで表示を切り替える
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        currentFilter = button.dataset.filter;
+        filterButtons.forEach((b) => b.classList.remove("active"));
+        button.classList.add("active");
+        render();
+      });
+    });
+
+    // 検索ボックスの入力に合わせて絞り込む
+    searchInput.addEventListener("input", () => {
+      searchKeyword = searchInput.value.trim();
+      render();
+    });
+
+    // Local Storage に保存するときのキー
+    const STORAGE_KEY = "todos";
+
+    // Local Storage からタスクを読み込む
+    function loadTodos() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (Array.isArray(saved)) {
+          todos = saved;
+        }
+      } catch (error) {
+        // 読み込みに失敗した場合は空のまま始める
+      }
+    }
+
+    // Local Storage にタスクを保存する
+    function saveTodos() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+      } catch (error) {
+        // 保存できない環境(プライベートモードなど)では何もしない
+      }
+    }
+
+    // 描画のたびに保存されるよう、既存の render を包む
+    const originalRender = render;
+    render = function () {
+      originalRender();
+      saveTodos();
+    };
+
+    loadTodos();
+
+    // 初回描画
+    render();
+  </script>
+</body>
+</html>
