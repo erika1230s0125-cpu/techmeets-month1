@@ -200,6 +200,16 @@
       color: #999;
       text-align: center;
     }
+
+    /* 期限切れタスクのハイライト */
+    .todo-item.overdue {
+      background-color: #fdecec;
+      border-left: 4px solid #e05555;
+    }
+
+    .todo-item.overdue .todo-text {
+      color: #c43c3c;
+    }
   </style>
 </head>
 <body>
@@ -434,6 +444,22 @@
     render = function () {
       originalRender();
       saveTodos();
+    };
+
+    // 期限切れのタスク全体を赤くハイライトする
+    function highlightOverdue() {
+      list.querySelectorAll(".todo-item").forEach((li) => {
+        if (li.querySelector(".todo-due.overdue")) {
+          li.classList.add("overdue");
+        }
+      });
+    }
+
+    // 描画のたびにハイライトされるよう、render をさらに包む
+    const renderWithSave = render;
+    render = function () {
+      renderWithSave();
+      highlightOverdue();
     };
 
     loadTodos();
