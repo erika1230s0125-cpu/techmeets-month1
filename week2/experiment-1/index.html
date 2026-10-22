@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>スライドショー</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      font-family: "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+      background-color: #f2f4f7;
+      color: #333;
+    }
+
+    .container {
+      max-width: 648px;
+      margin: 0 auto;
+      padding: 24px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    /* 画像の表示エリア */
+    .slide-image {
+      display: block;
+      width: 100%;
+      aspect-ratio: 2 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      background-color: #e5e8ec;
+    }
+
+    /* 前へ・次へボタンと枚数表示 */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .nav-button {
+      padding: 8px 20px;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #4a90e2;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .nav-button:hover {
+      background-color: #357abd;
+    }
+
+    .counter {
+      font-size: 0.875rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>スライドショー</h1>
+
+    <img class="slide-image" src="" alt="">
+
+    <div class="controls">
+      <button class="nav-button prev-button">&#8249; 前へ</button>
+      <span class="counter"></span>
+      <button class="nav-button next-button">次へ &#8250;</button>
+    </div>
+  </div>
+
+  <script>
+    // 表示する画像の一覧(区別しやすいように text でスライド番号を入れている)
+    const PLACEHOLDER_URL = "https://placehold.jp/600x300.png";
+    const images = [
+      { src: `${PLACEHOLDER_URL}?text=Slide%201`, alt: "スライド1" },
+      { src: `${PLACEHOLDER_URL}?text=Slide%202`, alt: "スライド2" },
+      { src: `${PLACEHOLDER_URL}?text=Slide%203`, alt: "スライド3" },
+      { src: `${PLACEHOLDER_URL}?text=Slide%204`, alt: "スライド4" }
+    ];
+
+    const imageEl = document.querySelector(".slide-image");
+    const counterEl = document.querySelector(".counter");
+    const prevButton = document.querySelector(".prev-button");
+    const nextButton = document.querySelector(".next-button");
+
+    let currentIndex = 0;
+
+    // 指定した画像を表示する(端まで行ったら反対側へループ)
+    function showImage(index) {
+      currentIndex = (index + images.length) % images.length;
+      imageEl.src = images[currentIndex].src;
+      imageEl.alt = images[currentIndex].alt;
+      counterEl.textContent = `${currentIndex + 1} / ${images.length}`;
+    }
+
+    prevButton.addEventListener("click", () => showImage(currentIndex - 1));
+    nextButton.addEventListener("click", () => showImage(currentIndex + 1));
+
+    showImage(0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プロフィール</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    /* カードを画面の中央に配置する */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 16px;
+      font-family: "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    .card {
+      width: 400px;
+      max-width: 100%;
+      padding: 32px 24px;
+      text-align: center;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .avatar {
+      display: block;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 16px;
+      object-fit: cover;
+      border-radius: 50%;
+      background-color: #e5e8ec;
+    }
+
+    .name {
+      margin: 0 0 8px;
+      font-size: 1.5rem;
+    }
+
+    .comment {
+      margin: 0 0 20px;
+      line-height: 1.6;
+      color: #666;
+    }
+
+    /* スキルバッジ(Flexboxで横並び) */
+    .skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .skill-badge {
+      padding: 4px 12px;
+      font-size: 0.875rem;
+      color: #357abd;
+      background-color: #e8f1fc;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img class="avatar" src="https://placehold.jp/100x100.png" alt="アイコン画像">
+    <h1 class="name"></h1>
+    <p class="comment"></p>
+    <ul class="skill-list"></ul>
+  </div>
+
+  <script>
+    // プロフィールの内容(ここを書き換えると表示が変わる)
+    const profile = {
+      name: "Erika",
+      comment: "Web制作を勉強中です。小さなアプリを作りながら成長中!",
+      skills: ["HTML", "CSS", "JavaScript", "Git"]
+    };
+
+    const nameEl = document.querySelector(".name");
+    const commentEl = document.querySelector(".comment");
+    const skillListEl = document.querySelector(".skill-list");
+
+    nameEl.textContent = profile.name;
+    commentEl.textContent = profile.comment;
+
+    // スキルの数だけバッジを作って並べる
+    profile.skills.forEach((skill) => {
+      const badge = document.createElement("li");
+      badge.className = "skill-badge";
+      badge.textContent = skill;
+      skillListEl.appendChild(badge);
+    });
+  </script>
+</body>
+</html>
