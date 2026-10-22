@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>好きなスイーツまとめ</title>
+  <style>
+    /* 全体の設定 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+      background-color: #fff7f9;
+      color: #4a3b3f;
+      line-height: 1.7;
+    }
+
+    /* ヘッダー */
+    .site-header {
+      background: linear-gradient(135deg, #ffc1d3, #ffe3c2);
+      text-align: center;
+      padding: 48px 16px;
+    }
+
+    .site-header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .lead {
+      color: #6b5459;
+    }
+
+    /* メイン */
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 16px;
+    }
+
+    /* カード一覧 */
+    .sweets {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(214, 128, 156, 0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(214, 128, 156, 0.3);
+    }
+
+    /* アイコン画像のプレースホルダー（円形） */
+    .card-icon {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background-color: #f1e4e8;
+      border: 2px dashed #d9b8c3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #a58c94;
+      font-size: 0.8rem;
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      color: #d6608a;
+      margin-bottom: 4px;
+    }
+
+    .tag {
+      display: inline-block;
+      background-color: #ffe3ec;
+      color: #b24a71;
+      font-size: 0.8rem;
+      padding: 2px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .rating {
+      margin-top: 12px;
+      color: #e8a33d;
+      font-weight: bold;
+    }
+
+    /* フッター */
+    .site-footer {
+      text-align: center;
+      padding: 24px 16px;
+      color: #9a868b;
+      font-size: 0.9rem;
+    }
+
+    /* スマホ向け */
+    @media (max-width: 600px) {
+      .site-header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1>好きなスイーツまとめ</h1>
+    <p class="lead">わたしが大好きなスイーツを集めました。</p>
+  </header>
+
+  <main>
+    <section class="sweets">
+      <article class="card">
+        <div class="card-icon">画像</div>
+        <h2>ショートケーキ</h2>
+        <p class="tag">洋菓子</p>
+        <p>ふわふわのスポンジと甘さ控えめの生クリーム、そして甘酸っぱいいちごの組み合わせが最高です。</p>
+        <p class="rating">おすすめ度：★★★★★</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">画像</div>
+        <h2>プリン</h2>
+        <p class="tag">洋菓子</p>
+        <p>固めの昔ながらのプリンが好き。ほろ苦いカラメルソースがアクセントになります。</p>
+        <p class="rating">おすすめ度：★★★★☆</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">画像</div>
+        <h2>みたらし団子</h2>
+        <p class="tag">和菓子</p>
+        <p>もちもちのお団子に、甘じょっぱいタレがたっぷり。温かいお茶と一緒に食べたいです。</p>
+        <p class="rating">おすすめ度：★★★★☆</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">画像</div>
+        <h2>ドーナツ</h2>
+        <p class="tag">洋菓子</p>
+        <p>シンプルなシュガードーナツも、チョコがけも、どれも好き。手軽に食べられるのが魅力です。</p>
+        <p class="rating">おすすめ度：★★★☆☆</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">画像</div>
+        <h2>抹茶パフェ</h2>
+        <p class="tag">和スイーツ</p>
+        <p>抹茶アイス、白玉、あんこ、寒天が詰まった贅沢な一品。抹茶の苦みと甘さのバランスが絶妙です。</p>
+        <p class="rating">おすすめ度：★★★★★</p>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">画像</div>
+        <h2>カップケーキ</h2>
+        <p class="tag">洋菓子</p>
+        <p>見た目がかわいくて、デコレーションを見ているだけでも楽しい気分になります。</p>
+        <p class="rating">おすすめ度：★★★☆☆</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 好きなスイーツまとめ</p>
+  </footer>
+</body>
+</html>
