@@ -44,9 +44,14 @@
 
     /* カード一覧 */
     .sweets {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
       gap: 24px;
+    }
+
+    /* 最小幅280pxで、余った幅は均等に分ける */
+    .sweets > .card {
+      flex: 1 1 280px;
     }
 
     .card {
